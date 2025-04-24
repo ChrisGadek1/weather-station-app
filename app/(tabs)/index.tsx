@@ -1,11 +1,27 @@
 import HistoricalMeasurements from '@/components/ui/HistoricalMeasurements';
 import LastMeasurement from '@/components/ui/LastMeasurement';
 import TopMenu from '@/components/ui/TopMenu';
+import { useAppDispatch } from '@/constants/hooks';
+import WeatherStation from '@/data/models/WeatherStation';
+import WeatherStationRepository from '@/data/repositories/cache/weatherStationRepository';
+import { addWeatherStations } from '@/data/slices/weatherStationSlice';
+import React from 'react';
 import { Image, StyleSheet, Platform, Text, View } from 'react-native';
 import { Divider } from 'react-native-paper';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
 export default function HomeScreen() {
+const dispatch = useAppDispatch();
+
+  const fetchWeatherStations = async () => {
+    const fetchedWeatherStations = new WeatherStationRepository().getWeatherStations()
+    dispatch(addWeatherStations(fetchedWeatherStations.map((station: WeatherStation) => station.toPlainObject())))
+  };
+
+  React.useEffect(() => {
+    fetchWeatherStations();
+  }, []);
+
   return (
     <SafeAreaProvider>
       <SafeAreaView style={{flex: 1}}>

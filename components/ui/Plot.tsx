@@ -7,7 +7,7 @@ export default function Plot() {
 
     return (
         <View>
-            <LineChart data={data}/>;
+            <LineChart data={data}/>
         </View>
     );
 }

@@ -1,9 +1,19 @@
+import { useAppDispatch, useAppSelector } from '@/constants/hooks';
+import WeatherStation from '@/data/models/WeatherStation';
 import * as React from 'react';
 import { StyleSheet, View, Text } from "react-native";
 import { Divider, IconButton, Menu } from "react-native-paper";
 
+export interface ITopMenuProps {
+  weatherStations: WeatherStation[];
+}
+
 export default function TopMenu() {
   const [visible, setVisible] = React.useState(false);
+  const dispatch = useAppDispatch();
+  const weatherStations = useAppSelector(state => state.weatherStationReducer).map(type => WeatherStation.fromPlainObject(type));
+
+  const currentWeatherStationName = weatherStations.find((station: WeatherStation) => station['_currentStation'])?.name || (weatherStations.length > 0 ? weatherStations[0].name : "No station selected");
 
   const openMenu = () => setVisible(true);
 
@@ -11,15 +21,22 @@ export default function TopMenu() {
 
   return (
     <View style={styles.mainContainer}>
-      
       <Menu
           visible={visible}
           onDismiss={closeMenu}
           anchor={<IconButton icon={"menu"} size={24} onPress={openMenu} />}>
-        <Menu.Item onPress={closeMenu} title="Location 2" />
-        <Menu.Item onPress={closeMenu} title="Location 3" />
+        {weatherStations.filter(station => !station.currentStation).map((station: WeatherStation) => (
+          <Menu.Item
+            key={station.id + station.name}
+            onPress={() => {
+              dispatch({ type: 'weatherStation/changeCurrentWeatherStation', payload: station.id });
+              closeMenu();
+            }}
+            title={station.name}
+          />
+        ))}
       </Menu>
-      <Text style={styles.text}>Location 1</Text>
+      <Text style={styles.text}>{currentWeatherStationName}</Text>
       <View style={{width: 44}}></View>
     </View>
   );
