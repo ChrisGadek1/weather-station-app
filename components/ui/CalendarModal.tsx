@@ -1,0 +1,97 @@
+import React from "react";
+import { Button, Modal, Portal, Text } from "react-native-paper";
+import {Calendar, CalendarList, Agenda, DateData} from 'react-native-calendars';
+import { View, StyleSheet } from "react-native";
+
+export type ICalendarModalProps = {
+    visible: boolean;
+    onDismiss: () => void;
+}
+
+export default function CalendarModal({visible, onDismiss}: ICalendarModalProps) {
+    const [periodBegin, setPeriodBegin] = React.useState<string | undefined>(undefined);
+    const [periodEnd, setPeriodEnd] = React.useState<string | undefined>(undefined);
+    const [markedDates, setMarkedDates] = React.useState<any>({});
+
+    const preparedMarkedDates = (currentPeriodBegin: string | undefined, currentPeriodEnd: string | undefined) => {
+        const dates: any = {};
+        if (currentPeriodBegin) {
+            dates[currentPeriodBegin] = {startingDay: true, color: 'green'};
+        }
+        if (currentPeriodEnd) {
+            dates[currentPeriodEnd] = {endingDay: true, color: 'green'};
+        }
+        return {...addMissingDaysBetween(currentPeriodBegin, currentPeriodEnd), ...dates};
+    }
+
+    const addMissingDaysBetween = (start: string | undefined, end: string | undefined) => {
+        const result: any = {}
+
+        if(start && end) {
+            const startDate = new Date(start);
+            const endDate = new Date(end);
+            const dates: string[] = [];
+
+            for (let d = startDate; d <= endDate; d.setDate(d.getDate() + 1)) {
+                dates.push(d.toISOString().split('T')[0]);
+            }
+            
+            dates.forEach((date) => {
+                result[date] = {color: 'green'};
+            })
+        }
+        
+        return result;
+    }
+
+    const handleDayPress = (day: DateData) => {
+        let currentPeriodBegin = periodBegin;
+        let currentPeriodEnd = periodEnd;
+
+        if (periodBegin === undefined) {
+            setPeriodBegin(day.dateString);
+            currentPeriodBegin = day.dateString;
+        } else if (periodEnd === undefined) {
+            setPeriodEnd(day.dateString);
+            currentPeriodEnd = day.dateString;
+        } else {
+            setPeriodBegin(day.dateString);
+            setPeriodEnd(undefined);
+            currentPeriodBegin = day.dateString;
+            currentPeriodEnd = undefined;
+        }
+        setMarkedDates(preparedMarkedDates(currentPeriodBegin, currentPeriodEnd));
+    }
+
+    return (
+        <Portal>
+            <Modal
+                visible={visible}
+                onDismiss={onDismiss}
+                contentContainerStyle={styles.modalContentContainer}>
+                <Calendar
+                    markingType={'period'}
+                    onDayPress={handleDayPress}
+                    markedDates={markedDates}
+                />
+                <View style={styles.buttonContainer}>
+                    <Button>Confirm</Button>
+                </View>
+            </Modal>
+        </Portal>
+    );
+}
+
+const styles = StyleSheet.create({
+    buttonContainer: {
+        display: "flex", 
+        flexDirection: "row", 
+        justifyContent: "flex-end"
+    },
+    modalContentContainer: {
+        padding: 20,
+        margin: 20,
+        borderRadius: 10,
+        backgroundColor: "white"
+    }
+})

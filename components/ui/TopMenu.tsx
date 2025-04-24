@@ -1,11 +1,24 @@
 import * as React from 'react';
 import { StyleSheet, View, Text } from "react-native";
-import { Divider, IconButton } from "react-native-paper";
+import { Divider, IconButton, Menu } from "react-native-paper";
 
 export default function TopMenu() {
+  const [visible, setVisible] = React.useState(false);
+
+  const openMenu = () => setVisible(true);
+
+  const closeMenu = () => setVisible(false);
+
   return (
     <View style={styles.mainContainer}>
-      <IconButton icon={"menu"} size={24} />
+      
+      <Menu
+          visible={visible}
+          onDismiss={closeMenu}
+          anchor={<IconButton icon={"menu"} size={24} onPress={openMenu} />}>
+        <Menu.Item onPress={closeMenu} title="Location 2" />
+        <Menu.Item onPress={closeMenu} title="Location 3" />
+      </Menu>
       <Text style={styles.text}>Location 1</Text>
       <View style={{width: 44}}></View>
     </View>
