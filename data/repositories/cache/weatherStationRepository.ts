@@ -5,9 +5,9 @@ export default class WeatherStationRepository {
 
     constructor() {
         this._weatherStations = [
-            new WeatherStation('1', 'Station 1', ['Sensor 1', 'Sensor 2'], true),
-            new WeatherStation('2', 'Station 2', ['Sensor 3']),
-            new WeatherStation('3', 'Station 3', ['Sensor 4', 'Sensor 5']),
+            new WeatherStation('1', 'Station 1', ['Temperature', 'Humidity', 'Precipitation', 'Wind Speed', 'Pressure'], true),
+            new WeatherStation('2', 'Station 2', ['Temperature', 'Humidity', 'Pressure']),
+            new WeatherStation('3', 'Station 3', ['Humidity', 'Precipitation', 'Wind Speed']),
         ]
     }
 

@@ -1,10 +1,17 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import { Button, IconButton, Menu } from "react-native-paper";
+import { ActivityIndicator, Button, IconButton, Menu } from "react-native-paper";
 import Plot from "./Plot";
 import CalendarModal from "./CalendarModal";
+import { WeatherElementType } from "@/data/models/types/WeatherElementType";
+import { useAppDispatch, useAppSelector } from "@/constants/hooks";
 
 export default function HistoricalMeasurements() {
+    const weatherElements: WeatherElementType[] = useAppSelector(state => state.weatherElementReducer);
+    const currentWeatherElement = weatherElements.find(element => element.currentElement);
+
+    const dispatch = useAppDispatch();
+
     const [unitMenuVisible, setUnitMenuVisible] = React.useState(false);
     const [timelineMenuVisible, setTimelineMenuVisible] = React.useState(false);
     const [calendarVisible, setCalendarVisible] = React.useState(false);
@@ -25,14 +32,26 @@ export default function HistoricalMeasurements() {
             <View style={styles.menuContainer}>
                 
                 <Menu
-                    anchor={<IconButton icon={"thermometer"} size={24} onPress={openUnitMenu} />}
+                    anchor={currentWeatherElement ?
+                        <IconButton icon={currentWeatherElement.icon} size={24} onPress={openUnitMenu} /> :
+                        <Button onPress={openUnitMenu}>
+                            <ActivityIndicator animating/>
+                        </Button>
+                    }
                     visible={unitMenuVisible}
                     onDismiss={closeUnitMenu}>
-                    <Menu.Item onPress={closeUnitMenu} leadingIcon={"thermometer"} title="Temperature" />
-                    <Menu.Item onPress={closeUnitMenu} leadingIcon={"water"} title="Humidity" />
-                    <Menu.Item onPress={closeUnitMenu} leadingIcon={"weather-rainy"} title="Precipitation" />
-                    <Menu.Item onPress={closeUnitMenu} leadingIcon={"weather-windy"} title="Wind Speed" />
-                    <Menu.Item onPress={closeUnitMenu} leadingIcon={"weight"} title="Pressure" />
+                    {weatherElements.map((element: WeatherElementType) => {
+                        return (
+                            <Menu.Item
+                                key={element.name}
+                                onPress={() => {
+                                    dispatch({ type: 'weatherElement/changeCurrentWeatherElement', payload: element });
+                                    closeUnitMenu();
+                                }}
+                                leadingIcon={element.icon}
+                                title={element.name} />
+                        );
+                    })}
                 </Menu>
                 <Menu
                     anchor={<Button onPress={openTimelineMenu}>Last 24h</Button>}

@@ -29,7 +29,7 @@ export default function TopMenu() {
           <Menu.Item
             key={station.id + station.name}
             onPress={() => {
-              dispatch({ type: 'weatherStation/changeCurrentWeatherStation', payload: station.id });
+              dispatch({ type: 'weatherStation/changeCurrentWeatherStation', payload: station.toPlainObject() });
               closeMenu();
             }}
             title={station.name}

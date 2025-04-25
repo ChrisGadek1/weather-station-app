@@ -18,8 +18,8 @@ export const weatherStationSlice = createSlice({
         removeWeatherStation: (state, action: PayloadAction<string>) => {
             return state.filter(station => station.id !== action.payload)
         },
-        changeCurrentWeatherStation: (state, action: PayloadAction<string>) => {
-            const currentStation = state.find(station => station.id === action.payload)
+        changeCurrentWeatherStation: (state, action: PayloadAction<WeatherStationType>) => {
+            const currentStation = state.find(station => station.id === action.payload.id)
             if (currentStation) {
                 state.forEach(station => {
                     station.currentStation = false
@@ -30,7 +30,7 @@ export const weatherStationSlice = createSlice({
     },
 })
 
-export const { addWeatherStation, addWeatherStations, removeWeatherStation } = weatherStationSlice.actions
+export const { addWeatherStation, addWeatherStations, removeWeatherStation, changeCurrentWeatherStation } = weatherStationSlice.actions
 
 export const selectWeatherStations = (state: RootState) => state.weatherStationReducer
 

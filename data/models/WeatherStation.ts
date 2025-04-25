@@ -1,12 +1,13 @@
+import { IconNamesType } from "@/constants/IconNames";
 import WeatherStationType from "./types/WeatherStationType";
 
 export default class WeatherStation {
     private _id: string;
     private _name: string;
-    private _sensorList: string[];
+    private _sensorList: IconNamesType[];
     private _currentStation: boolean;
 
-    constructor(id: string, name: string, sensorList: string[], currentStation: boolean = false) {
+    constructor(id: string, name: string, sensorList: IconNamesType[], currentStation: boolean = false) {
         this._id = id;
         this._name = name;
         this._sensorList = sensorList;
@@ -21,7 +22,7 @@ export default class WeatherStation {
         return this._name;
     }
 
-    get sensorList(): string[] {
+    get sensorList(): IconNamesType[] {
         return this._sensorList;
     }
 

@@ -4,7 +4,7 @@ import TopMenu from '@/components/ui/TopMenu';
 import { useAppDispatch } from '@/constants/hooks';
 import WeatherStation from '@/data/models/WeatherStation';
 import WeatherStationRepository from '@/data/repositories/cache/weatherStationRepository';
-import { addWeatherStations } from '@/data/slices/weatherStationSlice';
+import { addWeatherStations } from '@/data/slices/WeatherStationSlice';
 import React from 'react';
 import { Image, StyleSheet, Platform, Text, View } from 'react-native';
 import { Divider } from 'react-native-paper';
