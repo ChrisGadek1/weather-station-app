@@ -2,13 +2,15 @@ import { useAppDispatch, useAppSelector } from '@/constants/hooks';
 import WeatherStation from '@/data/models/WeatherStation';
 import * as React from 'react';
 import { StyleSheet, View, Text } from "react-native";
-import { Divider, IconButton, Menu } from "react-native-paper";
+import { Divider, IconButton, Menu, useTheme } from "react-native-paper";
 
 export interface ITopMenuProps {
   weatherStations: WeatherStation[];
 }
 
 export default function TopMenu() {
+  const theme = useTheme();
+
   const [visible, setVisible] = React.useState(false);
   const dispatch = useAppDispatch();
   const weatherStations = useAppSelector(state => state.weatherStationReducer).map(type => WeatherStation.fromPlainObject(type));
@@ -36,7 +38,7 @@ export default function TopMenu() {
           />
         ))}
       </Menu>
-      <Text style={styles.text}>{currentWeatherStationName}</Text>
+      <Text style={[styles.text, { color: theme.colors.onBackground }]}>{currentWeatherStationName}</Text>
       <View style={{width: 44}}></View>
     </View>
   );

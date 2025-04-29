@@ -9,11 +9,13 @@ import { addTimelines } from '@/data/slices/TimelineSlice';
 import { addWeatherStations } from '@/data/slices/WeatherStationSlice';
 import React from 'react';
 import { Image, StyleSheet, Platform, Text, View } from 'react-native';
-import { Divider } from 'react-native-paper';
+import { Divider, useTheme } from 'react-native-paper';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { LinearGradient } from 'expo-linear-gradient';
 
 export default function HomeScreen() {
-const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch();
+  const theme: any = useTheme();
 
   const fetchWeatherStations = async () => {
     const fetchedWeatherStations = new WeatherStationRepository().getWeatherStations()
@@ -32,6 +34,17 @@ const dispatch = useAppDispatch();
 
   return (
     <SafeAreaProvider>
+      <LinearGradient
+        colors={theme.backgroundGradientColor}
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          height: '100%',
+        }}
+      />
       <SafeAreaView style={{flex: 1}}>
         <View style={styles.mainOuterColumn}>
           <TopMenu />

@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import { ActivityIndicator, Button, IconButton, Menu } from "react-native-paper";
+import { ActivityIndicator, Button, IconButton, Menu, useTheme } from "react-native-paper";
 import Plot from "./Plot";
 import CalendarModal from "./CalendarModal";
 import { WeatherElementType } from "@/data/models/types/WeatherElementType";
@@ -9,6 +9,7 @@ import Timeline from "@/data/models/Timeline";
 import { TimelineType } from "@/data/models/types/Timeline";
 
 export default function HistoricalMeasurements() {
+    const theme = useTheme();
     const weatherElements: WeatherElementType[] = useAppSelector(state => state.weatherElementReducer);
     const currentWeatherElement = weatherElements.find(element => element.currentElement);
 
@@ -32,7 +33,7 @@ export default function HistoricalMeasurements() {
     return (
         <View>
             <View style={styles.mainTitleContainer}>
-                <Text style={styles.mainTitle}>Historical Measurements</Text>
+                <Text style={[styles.mainTitle, { color: theme.colors.onBackground }]}>Historical Measurements</Text>
             </View>
             <View style={styles.menuContainer}>
                 

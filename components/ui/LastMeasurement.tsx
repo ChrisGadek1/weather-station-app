@@ -1,37 +1,36 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
+import { useTheme } from "react-native-paper";
 
 export default function LastMeasurement() {
-    return (
-        <View>
+    const theme = useTheme();
 
-            <View style={styles.titleContainer}>
-                <Text style={styles.mainTitle}>Last Measurement</Text>
-                <Text style={styles.dateText}>2025-09-25 12:22:25</Text>
-            </View>
-            <View>
-                <View style={styles.mainMeasuresContainer}>
-                    <Text style={styles.mainMeasuresText}>22 C</Text>
-                    <Text style={styles.mainMeasuresText}>1013 HPa</Text>
-                </View>
-                <View style={styles.secondaryMeasuresContainer}>
-                    <Text style={styles.secondaryMeasuresText}>45 %</Text>
-                    <Text style={styles.secondaryMeasuresText}>Humidity</Text>
-                </View>
-                <View style={styles.secondaryMeasuresContainer}>
-                    <Text style={styles.secondaryMeasuresText}>1.3 mm</Text>
-                    <Text style={styles.secondaryMeasuresText}>Precipitation</Text>
-                </View>
-                <View style={styles.secondaryMeasuresContainer}>
-                    <Text style={styles.secondaryMeasuresText}>13 km/h</Text>
-                    <Text style={styles.secondaryMeasuresText}>Wind Speed</Text>
-                </View>
-                <View style={styles.secondaryMeasuresContainer}>
-                    <Text style={styles.secondaryMeasuresText}>NW</Text>
-                    <Text style={styles.secondaryMeasuresText}>Wind direction</Text>
-                </View>
-            </View>
+    return (
+      <View>
+        <View style={styles.titleContainer}>
+          <Text style={[styles.mainTitle, { color: theme.colors.onBackground }]}>Last Measurement</Text>
+          <Text style={[styles.dateText, { color: theme.colors.onBackground }]}>2025-09-25 12:22:25</Text>
         </View>
+
+        <View>
+          <View style={styles.mainMeasuresContainer}>
+            <Text style={[styles.mainMeasuresText, { color: theme.colors.primary }]}>22 C</Text>
+            <Text style={[styles.mainMeasuresText, { color: theme.colors.primary }]}>1013 HPa</Text>
+          </View>
+
+          {[
+            { value: '45 %', label: 'Humidity' },
+            { value: '1.3 mm', label: 'Precipitation' },
+            { value: '13 km/h', label: 'Wind Speed' },
+            { value: 'NW', label: 'Wind Direction' },
+          ].map(({ value, label }, idx) => (
+            <View key={idx} style={styles.secondaryMeasuresContainer}>
+              <Text style={[styles.secondaryMeasuresText, { color: theme.colors.onBackground }]}>{value}</Text>
+              <Text style={[styles.secondaryMeasuresText, { color: theme.colors.onBackground }]}>{label}</Text>
+            </View>
+          ))}
+        </View>
+      </View>
     );
 }
 

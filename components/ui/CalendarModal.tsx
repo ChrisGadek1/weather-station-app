@@ -1,17 +1,35 @@
 import React from "react";
-import { Button, Modal, Portal, Text } from "react-native-paper";
+import { Button, MD3Theme, Modal, Portal, useTheme } from "react-native-paper";
 import {Calendar, CalendarList, Agenda, DateData} from 'react-native-calendars';
 import { View, StyleSheet } from "react-native";
 import { useAppDispatch } from "@/constants/hooks";
 import { changeCurrentTimeline } from "@/data/slices/TimelineSlice";
-import { dismiss } from "expo-router/build/global-state/routing";
 
 export type ICalendarModalProps = {
     visible: boolean;
     onDismiss: () => void;
 }
 
-export default function CalendarModal({visible, onDismiss}: ICalendarModalProps) {
+export default function CalendarModal({visible, onDismiss}: ICalendarModalProps) {    
+    const theme = useTheme();
+    const calendarTheme = {
+        backgroundColor: theme.colors.background,
+        calendarBackground: theme.colors.background,
+        textSectionTitleColor: theme.colors.onBackground,
+        selectedDayBackgroundColor: theme.colors.primary,
+        selectedDayTextColor: theme.colors.onPrimary,
+        todayTextColor: theme.colors.primary,
+        dayTextColor: theme.colors.onBackground,
+        textDisabledColor: theme.colors.onSurfaceDisabled ?? '#d9e1e8',
+        dotColor: theme.colors.primary,
+        arrowColor: theme.colors.primary,
+        monthTextColor: theme.colors.onBackground,
+        indicatorColor: theme.colors.primary,
+        textDayFontFamily: 'System',
+        textMonthFontFamily: 'System',
+        textDayHeaderFontFamily: 'System',
+    };
+
     const [periodBegin, setPeriodBegin] = React.useState<string | undefined>(undefined);
     const [periodEnd, setPeriodEnd] = React.useState<string | undefined>(undefined);
     const [markedDates, setMarkedDates] = React.useState<any>({});
@@ -78,16 +96,18 @@ export default function CalendarModal({visible, onDismiss}: ICalendarModalProps)
     return (
         <Portal>
             <Modal
+                theme={theme}
                 visible={visible}
                 onDismiss={onDismiss}
-                contentContainerStyle={styles.modalContentContainer}>
+                contentContainerStyle={styles(theme).modalContentContainer}>
                 <Calendar
                     markingType={'period'}
                     onDayPress={handleDayPress}
                     markedDates={markedDates}
                     minDate={periodBegin && !periodEnd ? periodBegin : undefined}
+                    theme={calendarTheme}
                 />
-                <View style={styles.buttonContainer}>
+                <View style={styles(theme).buttonContainer}>
                     <Button disabled={!periodBegin || !periodEnd} onPress={handleCloseCalendar}>Confirm</Button>
                 </View>
             </Modal>
@@ -95,7 +115,7 @@ export default function CalendarModal({visible, onDismiss}: ICalendarModalProps)
     );
 }
 
-const styles = StyleSheet.create({
+const styles = (theme: MD3Theme) => StyleSheet.create({
     buttonContainer: {
         display: "flex", 
         flexDirection: "row", 
@@ -105,6 +125,6 @@ const styles = StyleSheet.create({
         padding: 20,
         margin: 20,
         borderRadius: 10,
-        backgroundColor: "white"
+        backgroundColor: theme.colors.background,
     }
 })

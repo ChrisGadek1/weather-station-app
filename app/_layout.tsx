@@ -1,4 +1,3 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { PaperProvider } from 'react-native-paper';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
@@ -9,6 +8,7 @@ import 'react-native-reanimated';
 import { store } from '@/data/store';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { Provider } from 'react-redux';
+import { darkTheme, lightTheme } from '@/constants/themes';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -30,15 +30,13 @@ export default function RootLayout() {
   }
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <PaperProvider>
-        <Provider store={store}>
-          <Stack>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          </Stack>
-          <StatusBar style="auto" />
-        </Provider>
-      </PaperProvider>
-    </ThemeProvider>
+    <PaperProvider theme={colorScheme === 'dark' ? darkTheme : lightTheme}>
+      <Provider store={store}>
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        </Stack>
+        <StatusBar style="auto" />
+      </Provider>
+    </PaperProvider>
   );
 }
