@@ -1,11 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit'
 import weatherStationReducer from '@/data/slices/WeatherStationSlice'
 import weatherElementReducer from '@/data/slices/WeatherElementSlice'
+import timelineReducer from '@/data/slices/TimelineSlice'
 
 export const store = configureStore({
   reducer: {
     weatherStationReducer: weatherStationReducer,
     weatherElementReducer: weatherElementReducer,
+    timelineReducer: timelineReducer
   },
 })
 

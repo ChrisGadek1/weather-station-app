@@ -3,7 +3,9 @@ import LastMeasurement from '@/components/ui/LastMeasurement';
 import TopMenu from '@/components/ui/TopMenu';
 import { useAppDispatch } from '@/constants/hooks';
 import WeatherStation from '@/data/models/WeatherStation';
+import TimelineRepository from '@/data/repositories/cache/timelineRepository';
 import WeatherStationRepository from '@/data/repositories/cache/weatherStationRepository';
+import { addTimelines } from '@/data/slices/TimelineSlice';
 import { addWeatherStations } from '@/data/slices/WeatherStationSlice';
 import React from 'react';
 import { Image, StyleSheet, Platform, Text, View } from 'react-native';
@@ -18,8 +20,14 @@ const dispatch = useAppDispatch();
     dispatch(addWeatherStations(fetchedWeatherStations.map((station: WeatherStation) => station.toPlainObject())))
   };
 
+  const fetchTimelines = async () => {
+    const fetchedTimelines = new TimelineRepository().getTimelines()
+    dispatch(addTimelines(fetchedTimelines.map((timeline) => timeline.toPlainObject())));
+  }
+
   React.useEffect(() => {
     fetchWeatherStations();
+    fetchTimelines();
   }, []);
 
   return (

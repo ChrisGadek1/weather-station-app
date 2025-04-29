@@ -5,10 +5,15 @@ import Plot from "./Plot";
 import CalendarModal from "./CalendarModal";
 import { WeatherElementType } from "@/data/models/types/WeatherElementType";
 import { useAppDispatch, useAppSelector } from "@/constants/hooks";
+import Timeline from "@/data/models/Timeline";
+import { TimelineType } from "@/data/models/types/Timeline";
 
 export default function HistoricalMeasurements() {
     const weatherElements: WeatherElementType[] = useAppSelector(state => state.weatherElementReducer);
     const currentWeatherElement = weatherElements.find(element => element.currentElement);
+
+    const timelines: TimelineType[] = useAppSelector(state => state.timelineReducer);
+    const currentTimeline = timelines.find(timeline => timeline.currentTimeline);
 
     const dispatch = useAppDispatch();
 
@@ -54,18 +59,33 @@ export default function HistoricalMeasurements() {
                     })}
                 </Menu>
                 <Menu
-                    anchor={<Button onPress={openTimelineMenu}>Last 24h</Button>}
+                    anchor={
+                        currentTimeline ?
+                        <Button onPress={openTimelineMenu}>{currentTimeline.type}</Button> :
+                        <Button onPress={openTimelineMenu}>
+                            <ActivityIndicator animating/>
+                        </Button>
+                    }
                     visible={timelineMenuVisible}
                     onDismiss={closeTimelineMenu}>
-                    <Menu.Item onPress={closeTimelineMenu} title="Last 24h" />
-                    <Menu.Item onPress={closeTimelineMenu} title="Last 7 days" />
-                    <Menu.Item onPress={closeTimelineMenu} title="Last 30 days" />
-                    <Menu.Item onPress={closeTimelineMenu} title="Last year" />
-                    <Menu.Item onPress={closeTimelineMenu} title="All time" />
-                    <Menu.Item onPress={() => {
-                        openCalendar();
-                        closeTimelineMenu();
-                    }} title="Custom" />
+                        {timelines
+                            .map(t => Timeline.fromPlainObject(t))
+                            .map((timeline: Timeline) => {
+                                return (
+                                    <Menu.Item
+                                        key={timeline.type}
+                                        onPress={() => {
+                                            dispatch({ type: 'timeline/changeCurrentTimeline', payload: timeline.toPlainObject() });
+                                            if(timeline.type === 'Custom') {
+                                                openCalendar();
+                                            }
+                                            closeTimelineMenu();
+                                        }}
+                                        title={timeline.type} 
+                                    />
+                                );
+                            })
+                        }
                 </Menu>
             </View>
             <CalendarModal visible={calendarVisible} onDismiss={closeCalendar} />
