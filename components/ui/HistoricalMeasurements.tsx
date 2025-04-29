@@ -75,8 +75,9 @@ export default function HistoricalMeasurements() {
                                     <Menu.Item
                                         key={timeline.type}
                                         onPress={() => {
-                                            dispatch({ type: 'timeline/changeCurrentTimeline', payload: timeline.toPlainObject() });
-                                            if(timeline.type === 'Custom') {
+                                            if(timeline.type !== 'Custom') {
+                                                dispatch({ type: 'timeline/changeCurrentTimeline', payload: timeline.toPlainObject() });
+                                            } else {
                                                 openCalendar();
                                             }
                                             closeTimelineMenu();

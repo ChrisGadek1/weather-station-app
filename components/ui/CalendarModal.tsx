@@ -2,6 +2,9 @@ import React from "react";
 import { Button, Modal, Portal, Text } from "react-native-paper";
 import {Calendar, CalendarList, Agenda, DateData} from 'react-native-calendars';
 import { View, StyleSheet } from "react-native";
+import { useAppDispatch } from "@/constants/hooks";
+import { changeCurrentTimeline } from "@/data/slices/TimelineSlice";
+import { dismiss } from "expo-router/build/global-state/routing";
 
 export type ICalendarModalProps = {
     visible: boolean;
@@ -12,6 +15,15 @@ export default function CalendarModal({visible, onDismiss}: ICalendarModalProps)
     const [periodBegin, setPeriodBegin] = React.useState<string | undefined>(undefined);
     const [periodEnd, setPeriodEnd] = React.useState<string | undefined>(undefined);
     const [markedDates, setMarkedDates] = React.useState<any>({});
+
+    const dispatch = useAppDispatch();
+
+    const handleCloseCalendar = () => {
+        if(periodBegin && periodEnd) {
+            dispatch(changeCurrentTimeline({type: "Custom", customTimeline: {begin: new Date(periodBegin).getTime(), end: new Date(periodEnd).getTime()}, currentTimeline: true}));
+        }
+        onDismiss();
+    }
 
     const preparedMarkedDates = (currentPeriodBegin: string | undefined, currentPeriodEnd: string | undefined) => {
         const dates: any = {};
@@ -73,9 +85,10 @@ export default function CalendarModal({visible, onDismiss}: ICalendarModalProps)
                     markingType={'period'}
                     onDayPress={handleDayPress}
                     markedDates={markedDates}
+                    minDate={periodBegin && !periodEnd ? periodBegin : undefined}
                 />
                 <View style={styles.buttonContainer}>
-                    <Button>Confirm</Button>
+                    <Button disabled={!periodBegin || !periodEnd} onPress={handleCloseCalendar}>Confirm</Button>
                 </View>
             </Modal>
         </Portal>
