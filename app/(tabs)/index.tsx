@@ -12,13 +12,14 @@ import { Image, StyleSheet, Platform, Text, View } from 'react-native';
 import { Divider, useTheme } from 'react-native-paper';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
+import LocalWeatherStationDataSource from '@/data/data_sources/cache/LocalWeatherStationDataSource';
 
 export default function HomeScreen() {
   const dispatch = useAppDispatch();
   const theme: any = useTheme();
 
   const fetchWeatherStations = async () => {
-    const fetchedWeatherStations = new WeatherStationRepository().getWeatherStations()
+    const fetchedWeatherStations = await new WeatherStationRepository(new LocalWeatherStationDataSource()).getLocalWeatherStations()
     dispatch(addWeatherStations(fetchedWeatherStations.map((station: WeatherStation) => station.toPlainObject())))
   };
 
@@ -79,6 +80,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     rowGap: 20,
     paddingBottom: 20,
+    paddingTop: 20,
   },
   lastMeasurementOuterContainer: {
     flexGrow: 4,

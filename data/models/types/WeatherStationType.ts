@@ -5,6 +5,8 @@ export type WeatherStationType = {
     name: string;
     sensorList: IconNamesType[];
     currentStation: boolean;
+    currentElementName: string;
+    currentTimeline: string;
 };
 
 export default WeatherStationType;

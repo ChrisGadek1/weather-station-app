@@ -1,6 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import type { RootState } from '../store'
-import WeatherStation from '../models/WeatherStation'
 import WeatherStationType from '../models/types/WeatherStationType'
 
 const initialState: WeatherStationType[] = []
@@ -26,11 +25,23 @@ export const weatherStationSlice = createSlice({
                 })
                 currentStation.currentStation = true
             }
-        }
+        },
+        changeCurrentWeatherElementOfCurrentStation: (state, action: PayloadAction<{ currentElementName: string}>) => {
+            const currentStation = state.find(station => station.currentStation)
+            if (currentStation) {
+                currentStation.currentElementName = action.payload.currentElementName
+            }
+        },
+        changeCurrentWeatherTimelineOfCurrentStation: (state, action: PayloadAction<{ currentTimeline: string}>) => {
+            const currentStation = state.find(station => station.currentStation)
+            if (currentStation) {
+                currentStation.currentTimeline = action.payload.currentTimeline
+            }
+        },
     },
 })
 
-export const { addWeatherStation, addWeatherStations, removeWeatherStation, changeCurrentWeatherStation } = weatherStationSlice.actions
+export const { addWeatherStation, addWeatherStations, removeWeatherStation, changeCurrentWeatherStation, changeCurrentWeatherElementOfCurrentStation, changeCurrentWeatherTimelineOfCurrentStation } = weatherStationSlice.actions
 
 export const selectWeatherStations = (state: RootState) => state.weatherStationReducer
 

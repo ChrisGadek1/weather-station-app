@@ -1,21 +1,19 @@
+import WeatherStationDataSource from "@/data/data_sources/WeatherStationDataSource"
 import WeatherStation from "@/data/models/WeatherStation"
 
 export default class WeatherStationRepository {
-    private _weatherStations: WeatherStation[] = []
+    private _weatherStationsDataSource: WeatherStationDataSource
 
-    constructor() {
-        this._weatherStations = [
-            new WeatherStation('1', 'Station 1', ['Temperature', 'Humidity', 'Precipitation', 'Wind Speed', 'Pressure'], true),
-            new WeatherStation('2', 'Station 2', ['Temperature', 'Humidity', 'Pressure']),
-            new WeatherStation('3', 'Station 3', ['Humidity', 'Precipitation', 'Wind Speed']),
-        ]
+    constructor(weatherStationDataSource: WeatherStationDataSource) {
+        this._weatherStationsDataSource = weatherStationDataSource
+        
     }
 
-    getWeatherStations() {
-        return this._weatherStations
+    async getLocalWeatherStations() {
+        return this._weatherStationsDataSource.getAllWeatherStations()
     }
 
-    getCurrentWeatherStation() {
-        return this._weatherStations.find((station: WeatherStation) => station.currentStation) || null
+    async getCurrentWeatherStation() {
+        return (await this._weatherStationsDataSource.getAllWeatherStations()).find(station => station.currentStation) || null
     }
 }
