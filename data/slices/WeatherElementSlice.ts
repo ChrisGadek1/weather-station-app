@@ -33,8 +33,8 @@ export const weatherElementSlice = createSlice({
             state.length = 0;
             const currentStation = action.payload.find(station => station.currentStation);
             if(currentStation) {
-                currentStation.sensorList.forEach((sensorName, index) => {
-                    if(index === 0) {
+                currentStation.sensorList.forEach((sensorName) => {
+                    if(sensorName === currentStation.currentElementName) {
                         state.push({ name: sensorName, icon: IconNames[sensorName], currentElement: true });
                     }
                     else {

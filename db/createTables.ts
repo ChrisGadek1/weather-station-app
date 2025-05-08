@@ -8,8 +8,7 @@ export const createTables = async (db: SQLite.SQLiteDatabase) => {
           sensor_list TEXT,
           current_station INTEGER DEFAULT 0,
           current_element_name TEXT,
-          current_timeline TEXT,
-          PRIMARY KEY(id)
+          current_timeline TEXT
       )
     `
     const measures = `
@@ -20,8 +19,7 @@ export const createTables = async (db: SQLite.SQLiteDatabase) => {
         value REAL,
         measured_quantity_name TEXT,
         weather_station_id INTEGER,
-        FOREIGN KEY(weather_station_id) REFERENCES weather_stations(id),
-        PRIMARY KEY(id)
+        FOREIGN KEY(weather_station_id) REFERENCES weather_stations(id)
      )
     `
     

@@ -9,10 +9,29 @@ export const weatherStationSlice = createSlice({
     initialState,
     reducers: {
         addWeatherStation: (state, action: PayloadAction<WeatherStationType>) => {
-            state.push(action.payload)
+            const existingStation = state.find(station => station.id === action.payload.id)
+            if(!existingStation) {
+                state.push(action.payload)
+            }
+            else {
+                const index = state.indexOf(existingStation)
+                state[index].currentElementName = action.payload.currentElementName
+                state[index].currentTimeline = action.payload.currentTimeline
+                state[index].currentStation = action.payload.currentStation
+            }
         },
         addWeatherStations: (state, action: PayloadAction<WeatherStationType[]>) => {
-            state.push(...action.payload)
+            const newStations = action.payload.filter(station => state.find(s => s.id === station.id) === undefined)
+            const existingStations = action.payload.filter(station => state.find(s => s.id === station.id) !== undefined)
+            state.push(...newStations)
+            state.forEach(station => {
+                const existingStation = existingStations.find(s => s.id === station.id)
+                if (existingStation) {
+                    station.currentElementName = existingStation.currentElementName
+                    station.currentTimeline = existingStation.currentTimeline
+                    station.currentStation = existingStation.currentStation
+                }
+            })
         },
         removeWeatherStation: (state, action: PayloadAction<string>) => {
             return state.filter(station => station.id !== action.payload)

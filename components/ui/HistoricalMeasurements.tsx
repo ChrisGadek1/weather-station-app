@@ -7,14 +7,19 @@ import { WeatherElementType } from "@/data/models/types/WeatherElementType";
 import { useAppDispatch, useAppSelector } from "@/constants/hooks";
 import Timeline from "@/data/models/Timeline";
 import { TimelineType } from "@/data/models/types/Timeline";
+import WeatherStationRepository from "@/data/repositories/cache/weatherStationRepository";
+import WeatherStation from "@/data/models/WeatherStation";
 
 export default function HistoricalMeasurements() {
     const theme = useTheme();
+    const weatherStationRepository = new WeatherStationRepository();
+    const currentWeatherStation = useAppSelector(state => state.weatherStationReducer).find(station => station.currentStation);
     const weatherElements: WeatherElementType[] = useAppSelector(state => state.weatherElementReducer);
     const currentWeatherElement = weatherElements.find(element => element.currentElement);
 
     const timelines: TimelineType[] = useAppSelector(state => state.timelineReducer);
     const currentTimeline = timelines.find(timeline => timeline.currentTimeline);
+
 
     const dispatch = useAppDispatch();
 
@@ -51,8 +56,12 @@ export default function HistoricalMeasurements() {
                             <Menu.Item
                                 key={element.name}
                                 onPress={() => {
-                                    dispatch({ type: 'weatherElement/changeCurrentWeatherElement', payload: element });
-                                    closeUnitMenu();
+                                    if(currentWeatherStation) {
+                                        weatherStationRepository.saveLocalWeatherStations([WeatherStation.fromPlainObject({...currentWeatherStation, currentElementName: element.name})], () => {
+                                            dispatch({ type: 'weatherElement/changeCurrentWeatherElement', payload: element });
+                                            closeUnitMenu();
+                                        })
+                                    }
                                 }}
                                 leadingIcon={element.icon}
                                 title={element.name} />
