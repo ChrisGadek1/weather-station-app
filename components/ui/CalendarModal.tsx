@@ -47,7 +47,8 @@ export default function CalendarModal({visible, onDismiss, currentWeatherStation
         if(periodBegin && periodEnd) {
             const newTimeline = new Timeline("Custom", true, new CustomTimeline(new Date(periodBegin), new Date(periodEnd)));
             weatherStationRepository.saveLocalWeatherStations([WeatherStation.fromPlainObject({...currentWeatherStation, currentTimeline: newTimeline})], () => {
-                dispatch(changeCurrentTimeline({type: "Custom", customTimeline: {begin: new Date(periodBegin).getTime(), end: new Date(periodEnd).getTime()}, currentTimeline: true}));
+                dispatch({ type: 'timeline/changeCurrentTimeline', payload: newTimeline.toPlainObject() });
+                dispatch({type: 'weatherStation/changeCurrentWeatherTimelineOfCurrentStation', payload: { currentTimeline: newTimeline.toPlainObject()} });
             });
         }
         onDismiss();

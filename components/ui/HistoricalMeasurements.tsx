@@ -20,7 +20,6 @@ export default function HistoricalMeasurements() {
     const timelines: TimelineType[] = useAppSelector(state => state.timelineReducer);
     const currentTimeline = timelines.find(timeline => timeline.currentTimeline);
 
-
     const dispatch = useAppDispatch();
 
     const [unitMenuVisible, setUnitMenuVisible] = React.useState(false);
@@ -59,6 +58,7 @@ export default function HistoricalMeasurements() {
                                     if(currentWeatherStation) {
                                         weatherStationRepository.saveLocalWeatherStations([WeatherStation.fromPlainObject({...currentWeatherStation, currentElementName: element.name})], () => {
                                             dispatch({ type: 'weatherElement/changeCurrentWeatherElement', payload: element });
+                                            dispatch({ type: 'weatherStation/changeCurrentWeatherElementOfCurrentStation', payload: { currentElementName: element.name } });
                                             closeUnitMenu();
                                         })
                                     }
@@ -88,6 +88,7 @@ export default function HistoricalMeasurements() {
                                             if(timeline.type !== 'Custom') {
                                                 weatherStationRepository.saveLocalWeatherStations([WeatherStation.fromPlainObject({...currentWeatherStation, currentTimeline: timeline})], () => {
                                                     dispatch({ type: 'timeline/changeCurrentTimeline', payload: timeline.toPlainObject() });
+                                                    dispatch({ type: 'weatherStation/changeCurrentWeatherTimelineOfCurrentStation', payload: { currentTimeline: timeline.toPlainObject() } });
                                                 })
                                             } else {
                                                 openCalendar();

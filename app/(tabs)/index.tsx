@@ -3,7 +3,6 @@ import LastMeasurement from '@/components/ui/LastMeasurement';
 import TopMenu from '@/components/ui/TopMenu';
 import { useAppDispatch } from '@/constants/hooks';
 import WeatherStation from '@/data/models/WeatherStation';
-import TimelineRepository from '@/data/repositories/cache/timelineRepository';
 import WeatherStationRepository from '@/data/repositories/cache/weatherStationRepository';
 import { addTimelines } from '@/data/slices/TimelineSlice';
 import { addWeatherStations } from '@/data/slices/WeatherStationSlice';
@@ -24,31 +23,9 @@ export default function HomeScreen() {
     dispatch(addWeatherStations(fetchedWeatherStations.map((station: WeatherStation) => station.toPlainObject())))
   };
 
-  const fetchTimelines = async () => {
-    const fetchedTimelines = new TimelineRepository().getTimelines()
-    const currentTimeline = await new TimelineRepository().getCurrentTimeline();
-    if (currentTimeline) {
-      const foundCurrentTimeline = fetchedTimelines.find(timeline => timeline.type === currentTimeline.type)
-      if(foundCurrentTimeline) {
-        foundCurrentTimeline.currentTimeline = true
-        foundCurrentTimeline.customTimeline = currentTimeline.customTimeline
-      }      
-    }
-    else {
-      const foundCurrentTimeline = fetchedTimelines.find(timeline => timeline.type === 'Last 24h')
-      if(foundCurrentTimeline) {
-        foundCurrentTimeline.currentTimeline = true
-      }
-    }
-    dispatch(addTimelines(fetchedTimelines.map((timeline) => timeline.toPlainObject())));
-  }
-
   React.useEffect(() => {
     const prepareData = async () => {
-      //await weatherStationRepository.deleteAllLocalWeatherStations();
-      // await seedDb();
       fetchWeatherStations();
-      fetchTimelines();
     }
     prepareData();
   }, []);

@@ -45,12 +45,10 @@ export const weatherElementSlice = createSlice({
         });
         builder.addCase(changeCurrentWeatherStation, (state, action) => {
             const currentStation = action.payload;
-            const currentElement = state.find(element => element.currentElement)
-            const currentElementInNewStation = currentStation.sensorList.find(sensorName => sensorName === currentElement?.name);
             state.length = 0;
             if(currentStation) {
                 currentStation.sensorList.forEach((sensorName, index) => {
-                    if(!currentElementInNewStation && index === 0 || currentElement?.name === sensorName) {
+                    if(currentStation.currentElementName === sensorName) {
                         state.push({ name: sensorName, icon: IconNames[sensorName], currentElement: true });
                     }
                     else {

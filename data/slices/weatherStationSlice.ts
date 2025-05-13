@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import type { RootState } from '../store'
 import WeatherStationType from '../models/types/WeatherStationType'
+import { TimelineType } from '../models/types/Timeline'
 
 const initialState: WeatherStationType[] = []
 
@@ -51,7 +52,7 @@ export const weatherStationSlice = createSlice({
                 currentStation.currentElementName = action.payload.currentElementName
             }
         },
-        changeCurrentWeatherTimelineOfCurrentStation: (state, action: PayloadAction<{ currentTimeline: string}>) => {
+        changeCurrentWeatherTimelineOfCurrentStation: (state, action: PayloadAction<{ currentTimeline: TimelineType}>) => {
             const currentStation = state.find(station => station.currentStation)
             if (currentStation) {
                 currentStation.currentTimeline = action.payload.currentTimeline
