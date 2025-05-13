@@ -1,5 +1,6 @@
 import { IconNamesType } from "@/constants/IconNames";
 import WeatherStationType from "./types/WeatherStationType";
+import Timeline from "./Timeline";
 
 export default class WeatherStation {
     private _id?: string = undefined;
@@ -7,9 +8,9 @@ export default class WeatherStation {
     private _sensorList: IconNamesType[];
     private _currentStation: boolean;
     private _currentElementName: string;
-    private _currentTimeline: string;
+    private _currentTimeline: Timeline;
 
-    constructor(name: string, sensorList: IconNamesType[], id?: string, currentStation: boolean = false, currentElementName: string = '', currentTimeline: string = '') {
+    constructor(name: string, sensorList: IconNamesType[], id?: string, currentStation: boolean = false, currentElementName: string = '', currentTimeline: Timeline = new Timeline('Last 24h')) {
         this._id = id;
         this._name = name;
         this._sensorList = sensorList;
@@ -46,11 +47,11 @@ export default class WeatherStation {
         this._currentElementName = value;
     }
 
-    get currentTimeline(): string {
+    get currentTimeline(): Timeline {
         return this._currentTimeline;
     }
 
-    set currentTimeline(value: string) {
+    set currentTimeline(value: Timeline) {
         this._currentTimeline = value;
     }
 
@@ -61,12 +62,12 @@ export default class WeatherStation {
             sensorList: this.sensorList,
             currentStation: this.currentStation,
             currentElementName: this.currentElementName,
-            currentTimeline: this.currentTimeline,
+            currentTimeline: this.currentTimeline.toPlainObject(),
         };
     }
 
     static fromPlainObject(obj: any): WeatherStation {
-        return new WeatherStation(obj.name, obj.sensorList, obj.id, obj.currentStation, obj.currentElementName, obj.currentTimeline);
+        return new WeatherStation(obj.name, obj.sensorList, obj.id, obj.currentStation, obj.currentElementName, Timeline.fromPlainObject(obj.currentTimeline));
     }
 
     static fromSqlResult(result: any): WeatherStation[] {
@@ -77,7 +78,7 @@ export default class WeatherStation {
             const sensorList = element.sensor_list.split(',');
             const isCurrentStation = element.current_station === 1;
             const currentElementName = element.current_element_name;
-            const currentTimeline = element.current_timeline;
+            const currentTimeline = Timeline.fromPlainObject(JSON.parse(element.current_timeline));
             const weatherStation = new WeatherStation(name, sensorList, id, isCurrentStation, currentElementName, currentTimeline);
             weatherStations.push(weatherStation);
         })

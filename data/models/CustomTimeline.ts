@@ -22,10 +22,8 @@ export default class CustomTimeline {
         };
     }
 
-    static fromPlainObject(obj: { begin: number; end: number } | "undefined"): CustomTimeline | undefined {
-        if(obj === "undefined") {
-            return undefined
-        }
+    static fromPlainObject(obj: { begin: number; end: number } | undefined): CustomTimeline | undefined {
+        if (!obj) return undefined;
         return new CustomTimeline(new Date(obj.begin), new Date(obj.end));
     }
 }

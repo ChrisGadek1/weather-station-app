@@ -1,4 +1,5 @@
 import { useAppDispatch, useAppSelector } from '@/constants/hooks';
+import Timeline from '@/data/models/Timeline';
 import WeatherStation from '@/data/models/WeatherStation';
 import WeatherStationRepository from '@/data/repositories/cache/weatherStationRepository';
 import * as React from 'react';

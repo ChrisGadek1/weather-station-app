@@ -19,6 +19,10 @@ export default class Timeline {
         return this._customTimeline;
     }
 
+    set customTimeline(value: CustomTimeline | undefined) {
+        this._customTimeline = value;
+    }
+
     get currentTimeline(): boolean {
         return this._currentTimeline;
     }
@@ -27,15 +31,15 @@ export default class Timeline {
         this._currentTimeline = value;
     }
 
-    toPlainObject(): { type: string; customTimeline: { begin: number; end: number } | "undefined" ; currentTimeline: boolean } {
+    toPlainObject(): { type: string; customTimeline: { begin: number; end: number } | undefined; currentTimeline: boolean } {
         return {
             type: this.type,
-            customTimeline: this.customTimeline ? this.customTimeline?.toPlainObject() : "undefined",
+            customTimeline: this.customTimeline?.toPlainObject(),
             currentTimeline: this.currentTimeline,
         };
     }
 
-    static fromPlainObject(obj: { type: string; customTimeline: { begin: number; end: number } | "undefined"; currentTimeline: boolean }): Timeline {
+    static fromPlainObject(obj: { type: string; customTimeline?: { begin: number; end: number }; currentTimeline: boolean }): Timeline {
         return new Timeline(obj.type, obj.currentTimeline, CustomTimeline.fromPlainObject(obj.customTimeline));
     }
 }

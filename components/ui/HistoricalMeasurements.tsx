@@ -86,7 +86,9 @@ export default function HistoricalMeasurements() {
                                         key={timeline.type}
                                         onPress={() => {
                                             if(timeline.type !== 'Custom') {
-                                                dispatch({ type: 'timeline/changeCurrentTimeline', payload: timeline.toPlainObject() });
+                                                weatherStationRepository.saveLocalWeatherStations([WeatherStation.fromPlainObject({...currentWeatherStation, currentTimeline: timeline})], () => {
+                                                    dispatch({ type: 'timeline/changeCurrentTimeline', payload: timeline.toPlainObject() });
+                                                })
                                             } else {
                                                 openCalendar();
                                             }
@@ -99,7 +101,7 @@ export default function HistoricalMeasurements() {
                         }
                 </Menu>
             </View>
-            <CalendarModal visible={calendarVisible} onDismiss={closeCalendar} />
+            <CalendarModal visible={calendarVisible} onDismiss={closeCalendar} currentWeatherStation={currentWeatherStation} />
             <View style={styles.plotContainer}>
                 <Plot />
             </View>

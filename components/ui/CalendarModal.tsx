@@ -1,17 +1,24 @@
 import React from "react";
 import { Button, MD3Theme, Modal, Portal, useTheme } from "react-native-paper";
-import {Calendar, CalendarList, Agenda, DateData} from 'react-native-calendars';
+import {Calendar, DateData} from 'react-native-calendars';
 import { View, StyleSheet } from "react-native";
 import { useAppDispatch } from "@/constants/hooks";
 import { changeCurrentTimeline } from "@/data/slices/TimelineSlice";
+import WeatherStationRepository from "@/data/repositories/cache/weatherStationRepository";
+import WeatherStation from "@/data/models/WeatherStation";
+import Timeline from "@/data/models/Timeline";
+import CustomTimeline from "@/data/models/CustomTimeline";
+import WeatherStationType from "@/data/models/types/WeatherStationType";
 
 export type ICalendarModalProps = {
     visible: boolean;
     onDismiss: () => void;
+    currentWeatherStation?: WeatherStationType;
 }
 
-export default function CalendarModal({visible, onDismiss}: ICalendarModalProps) {    
+export default function CalendarModal({visible, onDismiss, currentWeatherStation}: ICalendarModalProps) {    
     const theme = useTheme();
+    const weatherStationRepository = new WeatherStationRepository();
     const calendarTheme = {
         backgroundColor: theme.colors.background,
         calendarBackground: theme.colors.background,
@@ -38,7 +45,10 @@ export default function CalendarModal({visible, onDismiss}: ICalendarModalProps)
 
     const handleCloseCalendar = () => {
         if(periodBegin && periodEnd) {
-            dispatch(changeCurrentTimeline({type: "Custom", customTimeline: {begin: new Date(periodBegin).getTime(), end: new Date(periodEnd).getTime()}, currentTimeline: true}));
+            const newTimeline = new Timeline("Custom", true, new CustomTimeline(new Date(periodBegin), new Date(periodEnd)));
+            weatherStationRepository.saveLocalWeatherStations([WeatherStation.fromPlainObject({...currentWeatherStation, currentTimeline: newTimeline})], () => {
+                dispatch(changeCurrentTimeline({type: "Custom", customTimeline: {begin: new Date(periodBegin).getTime(), end: new Date(periodEnd).getTime()}, currentTimeline: true}));
+            });
         }
         onDismiss();
     }

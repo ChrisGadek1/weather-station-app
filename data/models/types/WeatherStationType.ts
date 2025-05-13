@@ -6,7 +6,13 @@ export type WeatherStationType = {
     sensorList: IconNamesType[];
     currentStation: boolean;
     currentElementName: string;
-    currentTimeline: string;
+    currentTimeline: {
+        type: string;
+        customTimeline?: {
+            begin: number;
+            end: number;
+        };
+    }
 };
 
 export default WeatherStationType;

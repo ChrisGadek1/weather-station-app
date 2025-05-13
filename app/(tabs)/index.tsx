@@ -12,6 +12,7 @@ import { Image, StyleSheet, Platform, Text, View } from 'react-native';
 import { Divider, useTheme } from 'react-native-paper';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
+import seedDb from '@/db/seedDb';
 
 export default function HomeScreen() {
   const dispatch = useAppDispatch();
@@ -25,11 +26,27 @@ export default function HomeScreen() {
 
   const fetchTimelines = async () => {
     const fetchedTimelines = new TimelineRepository().getTimelines()
+    const currentTimeline = await new TimelineRepository().getCurrentTimeline();
+    if (currentTimeline) {
+      const foundCurrentTimeline = fetchedTimelines.find(timeline => timeline.type === currentTimeline.type)
+      if(foundCurrentTimeline) {
+        foundCurrentTimeline.currentTimeline = true
+        foundCurrentTimeline.customTimeline = currentTimeline.customTimeline
+      }      
+    }
+    else {
+      const foundCurrentTimeline = fetchedTimelines.find(timeline => timeline.type === 'Last 24h')
+      if(foundCurrentTimeline) {
+        foundCurrentTimeline.currentTimeline = true
+      }
+    }
     dispatch(addTimelines(fetchedTimelines.map((timeline) => timeline.toPlainObject())));
   }
 
   React.useEffect(() => {
     const prepareData = async () => {
+      //await weatherStationRepository.deleteAllLocalWeatherStations();
+      // await seedDb();
       fetchWeatherStations();
       fetchTimelines();
     }
