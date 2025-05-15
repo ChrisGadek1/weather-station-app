@@ -3,7 +3,6 @@ import { Button, MD3Theme, Modal, Portal, useTheme } from "react-native-paper";
 import {Calendar, DateData} from 'react-native-calendars';
 import { View, StyleSheet } from "react-native";
 import { useAppDispatch } from "@/constants/hooks";
-import { changeCurrentTimeline } from "@/data/slices/TimelineSlice";
 import WeatherStationRepository from "@/data/repositories/cache/weatherStationRepository";
 import WeatherStation from "@/data/models/WeatherStation";
 import Timeline from "@/data/models/Timeline";
@@ -44,10 +43,9 @@ export default function CalendarModal({visible, onDismiss, currentWeatherStation
     const dispatch = useAppDispatch();
 
     const handleCloseCalendar = () => {
-        if(periodBegin && periodEnd) {
-            const newTimeline = new Timeline("Custom", true, new CustomTimeline(new Date(periodBegin), new Date(periodEnd)));
-            weatherStationRepository.saveLocalWeatherStations([WeatherStation.fromPlainObject({...currentWeatherStation, currentTimeline: newTimeline})], () => {
-                dispatch({ type: 'timeline/changeCurrentTimeline', payload: newTimeline.toPlainObject() });
+        if(periodBegin && periodEnd && currentWeatherStation) {
+            const newTimeline = new Timeline("Custom", new CustomTimeline(new Date(periodBegin), new Date(periodEnd)));
+            weatherStationRepository.saveLocalWeatherStations([WeatherStation.fromPlainObject({...currentWeatherStation, currentTimeline: newTimeline.toPlainObject()})], () => {
                 dispatch({type: 'weatherStation/changeCurrentWeatherTimelineOfCurrentStation', payload: { currentTimeline: newTimeline.toPlainObject()} });
             });
         }

@@ -66,7 +66,7 @@ export default class WeatherStation {
         };
     }
 
-    static fromPlainObject(obj: any): WeatherStation {
+    static fromPlainObject(obj: WeatherStationType): WeatherStation {
         return new WeatherStation(obj.name, obj.sensorList, obj.id, obj.currentStation, obj.currentElementName, Timeline.fromPlainObject(obj.currentTimeline));
     }
 

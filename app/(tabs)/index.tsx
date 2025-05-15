@@ -4,14 +4,12 @@ import TopMenu from '@/components/ui/TopMenu';
 import { useAppDispatch } from '@/constants/hooks';
 import WeatherStation from '@/data/models/WeatherStation';
 import WeatherStationRepository from '@/data/repositories/cache/weatherStationRepository';
-import { addTimelines } from '@/data/slices/TimelineSlice';
 import { addWeatherStations } from '@/data/slices/WeatherStationSlice';
 import React from 'react';
 import { Image, StyleSheet, Platform, Text, View } from 'react-native';
 import { Divider, useTheme } from 'react-native-paper';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
-import seedDb from '@/db/seedDb';
 
 export default function HomeScreen() {
   const dispatch = useAppDispatch();

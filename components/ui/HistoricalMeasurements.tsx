@@ -6,19 +6,23 @@ import CalendarModal from "./CalendarModal";
 import { WeatherElementType } from "@/data/models/types/WeatherElementType";
 import { useAppDispatch, useAppSelector } from "@/constants/hooks";
 import Timeline from "@/data/models/Timeline";
-import { TimelineType } from "@/data/models/types/Timeline";
 import WeatherStationRepository from "@/data/repositories/cache/weatherStationRepository";
 import WeatherStation from "@/data/models/WeatherStation";
+import timelinesConst from "@/constants/timelines";
+import WeatherElement from "@/data/models/WeatherElement";
+import IconNames from "@/constants/IconNames";
 
 export default function HistoricalMeasurements() {
     const theme = useTheme();
     const weatherStationRepository = new WeatherStationRepository();
-    const currentWeatherStation = useAppSelector(state => state.weatherStationReducer).find(station => station.currentStation);
-    const weatherElements: WeatherElementType[] = useAppSelector(state => state.weatherElementReducer);
-    const currentWeatherElement = weatherElements.find(element => element.currentElement);
+    const weatherStations = useAppSelector(state => state.weatherStationReducer).map(station => WeatherStation.fromPlainObject(station));
+    const currentWeatherStation = weatherStations.find(station => station.currentStation);
+    const timelines = timelinesConst.map(t => Timeline.fromPlainObject({type: t, customTimeline: undefined}));
+    const weatherElements = currentWeatherStation?.sensorList.map(sensor => WeatherElement.fromPlainObject({icon: IconNames[sensor], name: sensor})) ?? [];
 
-    const timelines: TimelineType[] = useAppSelector(state => state.timelineReducer);
-    const currentTimeline = timelines.find(timeline => timeline.currentTimeline);
+    const currentWeatherElement = weatherElements.find(element => element.name === currentWeatherStation?.currentElementName);
+
+    const currentTimeline = currentWeatherStation?.currentTimeline
 
     const dispatch = useAppDispatch();
 
@@ -56,8 +60,7 @@ export default function HistoricalMeasurements() {
                                 key={element.name}
                                 onPress={() => {
                                     if(currentWeatherStation) {
-                                        weatherStationRepository.saveLocalWeatherStations([WeatherStation.fromPlainObject({...currentWeatherStation, currentElementName: element.name})], () => {
-                                            dispatch({ type: 'weatherElement/changeCurrentWeatherElement', payload: element });
+                                        weatherStationRepository.saveLocalWeatherStations([WeatherStation.fromPlainObject({...currentWeatherStation.toPlainObject(), currentElementName: element.name})], () => {
                                             dispatch({ type: 'weatherStation/changeCurrentWeatherElementOfCurrentStation', payload: { currentElementName: element.name } });
                                             closeUnitMenu();
                                         })
@@ -79,17 +82,17 @@ export default function HistoricalMeasurements() {
                     visible={timelineMenuVisible}
                     onDismiss={closeTimelineMenu}>
                         {timelines
-                            .map(t => Timeline.fromPlainObject(t))
                             .map((timeline: Timeline) => {
                                 return (
                                     <Menu.Item
                                         key={timeline.type}
                                         onPress={() => {
                                             if(timeline.type !== 'Custom') {
-                                                weatherStationRepository.saveLocalWeatherStations([WeatherStation.fromPlainObject({...currentWeatherStation, currentTimeline: timeline})], () => {
-                                                    dispatch({ type: 'timeline/changeCurrentTimeline', payload: timeline.toPlainObject() });
-                                                    dispatch({ type: 'weatherStation/changeCurrentWeatherTimelineOfCurrentStation', payload: { currentTimeline: timeline.toPlainObject() } });
-                                                })
+                                                if(currentWeatherStation) {
+                                                    weatherStationRepository.saveLocalWeatherStations([WeatherStation.fromPlainObject({...currentWeatherStation.toPlainObject(), currentTimeline: timeline.toPlainObject()})], () => {
+                                                        dispatch({ type: 'weatherStation/changeCurrentWeatherTimelineOfCurrentStation', payload: { currentTimeline: timeline.toPlainObject() } });
+                                                    })
+                                                }
                                             } else {
                                                 openCalendar();
                                             }
@@ -102,7 +105,7 @@ export default function HistoricalMeasurements() {
                         }
                 </Menu>
             </View>
-            <CalendarModal visible={calendarVisible} onDismiss={closeCalendar} currentWeatherStation={currentWeatherStation} />
+            <CalendarModal visible={calendarVisible} onDismiss={closeCalendar} currentWeatherStation={currentWeatherStation?.toPlainObject()} />
             <View style={styles.plotContainer}>
                 <Plot />
             </View>

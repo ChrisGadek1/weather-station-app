@@ -3,11 +3,9 @@ import CustomTimeline from "./CustomTimeline";
 export default class Timeline {
     private _type: string;
     private _customTimeline?: CustomTimeline;
-    private _currentTimeline: boolean = false;
 
-    constructor(type: string, currentTimeline: boolean = false, customTimeline?: CustomTimeline) {
+    constructor(type: string, customTimeline?: CustomTimeline) {
         this._type = type;
-        this._currentTimeline = currentTimeline;
         this._customTimeline = customTimeline;
     }
 
@@ -23,23 +21,14 @@ export default class Timeline {
         this._customTimeline = value;
     }
 
-    get currentTimeline(): boolean {
-        return this._currentTimeline;
-    }
-
-    set currentTimeline(value: boolean) {
-        this._currentTimeline = value;
-    }
-
-    toPlainObject(): { type: string; customTimeline: { begin: number; end: number } | undefined; currentTimeline: boolean } {
+    toPlainObject(): { type: string; customTimeline: { begin: number; end: number } | undefined } {
         return {
             type: this.type,
             customTimeline: this.customTimeline?.toPlainObject(),
-            currentTimeline: this.currentTimeline,
         };
     }
 
-    static fromPlainObject(obj: { type: string; customTimeline?: { begin: number; end: number }; currentTimeline: boolean }): Timeline {
-        return new Timeline(obj.type, obj.currentTimeline, CustomTimeline.fromPlainObject(obj.customTimeline));
+    static fromPlainObject(obj: { type: string; customTimeline?: { begin: number; end: number } }): Timeline {
+        return new Timeline(obj.type, CustomTimeline.fromPlainObject(obj.customTimeline));
     }
 }
