@@ -19,6 +19,7 @@ export const createTables = async (db: SQLite.SQLiteDatabase) => {
         value REAL,
         measured_quantity_name TEXT,
         weather_station_id INTEGER,
+        timestamp INTEGER,
         FOREIGN KEY(weather_station_id) REFERENCES weather_stations(id)
      )
     `

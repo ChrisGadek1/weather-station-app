@@ -5,18 +5,20 @@ import MeasureDataSource from "@/data/data_sources/MeasureDataSource";
 import { db } from "@/db/connect";
 
 export default class LocalMeasureDataSource implements MeasureDataSource {
+    async deleteAllMeasures() {
+        (await db).execSync(MeasureQuery.deleteAllMeasures());
+    }
+    async getAllMeasuresByWeatherStation(weatherStationId: string): Promise<Measure[]> {
+        const measuresResults = (await db).getAllSync(MeasureQuery.getAllMeasuresByWeatherStation(weatherStationId));
+        return Measure.fromSqlResult(measuresResults);
+    }
+
     async getAllMeasures(): Promise<Measure[]> {
         const measuresResults = (await db).getAllSync(MeasureQuery.getAllMeasures())
-        const measures: Measure[] = [];
-        measuresResults?.forEach((element: any) => {
-            const id = element.id;
-            const name = element.name;
-            const unit = element.unit;
-            const value = element.value;
-            const measuredQuantityName = element.measured_quantity_name;
-            const measure = new Measure(id, name, unit, value, measuredQuantityName);
-            measures.push(measure);
-        });
-        return measures;
+        return Measure.fromSqlResult(measuresResults);
+    }
+
+    async saveMeasures(measures: Measure[]): Promise<void> {
+       (await db).execSync(MeasureQuery.saveMeasures(measures));
     }
 }
