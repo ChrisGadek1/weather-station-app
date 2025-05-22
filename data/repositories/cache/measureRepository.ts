@@ -20,4 +20,8 @@ export default class MeasureRepository {
     async deleteLocalMeasures(): Promise<void> {
         await this._measuresLocalDataSource.deleteAllMeasures();
     }
+
+    async getLocalMeasuresFromCurrentWeatherStation(): Promise<Measure[]> {
+        return this._measuresLocalDataSource.getAllMeasuresFromCurrentWeatherStation();
+    }
 }

@@ -3,8 +3,16 @@ import MeasureQuery from "@/data/models/queries/MeasureQuery";
 import WeatherStation from "@/data/models/WeatherStation";
 import MeasureDataSource from "@/data/data_sources/MeasureDataSource";
 import { db } from "@/db/connect";
+import WeatherStationRepository from "@/data/repositories/cache/weatherStationRepository";
 
 export default class LocalMeasureDataSource implements MeasureDataSource {
+    async getAllMeasuresFromCurrentWeatherStation(): Promise<Measure[]> {
+        const weatherStation = await new WeatherStationRepository().getCurrentWeatherStation();
+        if (weatherStation && weatherStation.id) {
+            return await this.getAllMeasuresByWeatherStation(weatherStation.id);
+        }
+        return [];
+    }
     async deleteAllMeasures() {
         (await db).execSync(MeasureQuery.deleteAllMeasures());
     }

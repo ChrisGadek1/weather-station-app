@@ -5,6 +5,8 @@ export default interface MeasureDataSource {
 
     getAllMeasuresByWeatherStation(weatherStationId: string): Promise<Measure[]>;
 
+    getAllMeasuresFromCurrentWeatherStation(): Promise<Measure[]>;
+
     saveMeasures(measures: Measure[]): Promise<void>;
 
     deleteAllMeasures(): Promise<void>;

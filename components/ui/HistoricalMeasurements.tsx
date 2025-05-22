@@ -127,7 +127,8 @@ const styles = StyleSheet.create({
     plotContainer: {
         display: "flex",
         flexDirection: "row",
-        justifyContent: "center"
+        justifyContent: "center",
+        width: "100%",
     },
     menuContainer: {
         display: "flex",

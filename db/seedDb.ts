@@ -33,7 +33,7 @@ export default async function seedDb() {
             'Temperature',
             '°C',
             26,
-            'Humidity',
+            'Temperature',
             foundWeatherStations[0]?.id!,
             new Date(1747473924000)
         ),
@@ -42,7 +42,7 @@ export default async function seedDb() {
             'Temperature',
             '°C',
             27,
-            'Pressure',
+            'Temperature',
             foundWeatherStations[0]?.id!,
             new Date(1747470324000)
         ),
@@ -69,7 +69,7 @@ export default async function seedDb() {
             'Temperature',
             '°C',
             20,
-            'Humidity',
+            'Temperature',
             foundWeatherStations[0]?.id!,
             new Date(1747459524000)
         ),
@@ -78,9 +78,9 @@ export default async function seedDb() {
             'Temperature',
             '°C',
             18,
-            'Humidity',
+            'Temperature',
             foundWeatherStations[0]?.id!,
-            new Date(1747455924000)
+            new Date(1747445924000)
         ),
     
         new Measure(
