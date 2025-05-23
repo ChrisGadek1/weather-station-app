@@ -13,6 +13,7 @@ export default class MeasureQuery {
         const values = measures.map((measure) => {
             return `('${measure.unit}', '${measure.name}', ${measure.value}, '${measure.measuredQuantityName}', ${measure.weatherStationId}, '${measure.timestamp.getTime()}')`;
         });
+        console.log("VALUES", values);
         return `INSERT INTO measures (unit, name, value, measured_quantity_name, weather_station_id, timestamp) VALUES ${values.join(", ")}`;
     }
 

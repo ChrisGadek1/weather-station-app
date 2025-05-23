@@ -14,7 +14,7 @@ export default async function seedDb() {
         new WeatherStation('Station 3', ['Temperature', 'Precipitation', 'Wind Speed'], undefined, false, 'Temperature', new Timeline('Last 7 days'))
     ];
 
-    await weatherStationRepository.saveLocalWeatherStations(weatherStations)
+    await weatherStationRepository.saveLocalWeatherStations(weatherStations);
 
     const foundWeatherStations = await weatherStationRepository.getLocalWeatherStations();
 

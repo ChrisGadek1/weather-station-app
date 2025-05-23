@@ -10,7 +10,7 @@ export default class WeatherStationRepository {
     }
 
     async saveLocalWeatherStations(weatherStations: WeatherStation[], callback?: () => void) {
-        this._weatherStationsDataSource.saveAllWeatherStations(weatherStations).then(() => {
+        await this._weatherStationsDataSource.saveAllWeatherStations(weatherStations).then(() => {
             if (callback) {
                 callback()
             }
