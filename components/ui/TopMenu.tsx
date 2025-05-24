@@ -45,13 +45,15 @@ export default function TopMenu() {
           visible={visible}
           onDismiss={closeMenu}
           anchor={<IconButton icon={"menu"} size={24} onPress={openMenu} />}>
-        {weatherStations.filter(station => !station.currentStation).map((station: WeatherStation) => (
-          <Menu.Item
-            key={station.id + station.name}
-            onPress={() => handleMenuItemPress(station)}
-            title={station.name}
-          />
-        ))}
+            <View style={{ marginTop: 20 }}>
+              {weatherStations.filter(station => !station.currentStation).map((station: WeatherStation) => (
+                <Menu.Item
+                  key={station.id + station.name}
+                  onPress={() => handleMenuItemPress(station)}
+                  title={station.name}
+                />
+              ))}
+            </View>
       </Menu>
       <Text style={[styles.text, { color: theme.colors.onBackground }]}>{currentWeatherStationName}</Text>
       <View style={{width: 44}}></View>

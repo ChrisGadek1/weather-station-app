@@ -27,6 +27,6 @@ export default class LocalMeasureDataSource implements MeasureDataSource {
     }
 
     async saveMeasures(measures: Measure[]): Promise<void> {
-       (await db).execSync(MeasureQuery.saveMeasures(measures));
+        (await db).execSync(MeasureQuery.saveMeasures(measures));
     }
 }

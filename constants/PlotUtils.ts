@@ -1,3 +1,4 @@
+import Measure from "@/data/models/Measure";
 import Timeline from "@/data/models/Timeline";
 
 export const generateHourlyTimeLabels = (timeline: Timeline): number[] => {
@@ -5,7 +6,7 @@ export const generateHourlyTimeLabels = (timeline: Timeline): number[] => {
     const labels: number[] = [];
     const oneHour = 60 * 60 * 1000;
 
-    for (let t = start.getTime(); t <= end.getTime(); t += oneHour) {
+    for (let t = start.getTime(); t <= end.getTime() + oneHour; t += oneHour) {
         labels.push(t);
     }
 
@@ -17,7 +18,7 @@ export const generateDailyTimeLabels = (timeline: Timeline): number[] => {
     const labels: number[] = [];
     const oneDay = 24 * 60 * 60 * 1000;
 
-    for (let t = start.getTime(); t <= end.getTime(); t += oneDay) {
+    for (let t = start.getTime(); t <= end.getTime() + oneDay; t += oneDay) {
         labels.push(t);
     }
 
@@ -29,11 +30,16 @@ export const generateMonthlyTimeLabels = (timeline: Timeline): number[] => {
     const labels: number[] = [];
     const oneMonth = 30 * 24 * 60 * 60 * 1000;
 
-    for (let t = start.getTime(); t <= end.getTime(); t += oneMonth) {
+    for (let t = start.getTime(); t <= end.getTime() + oneMonth; t += oneMonth) {
         labels.push(t);
     }
 
     return labels;
+}
+
+export const filterMeasuresByTimeline = (measures: Measure[], timeline: Timeline) => {
+    const { start, end } = timelineToBounds(timeline);
+    return measures.filter(measure => measure.timestamp.getTime() >= start.getTime() && measure.timestamp.getTime() <= end.getTime());
 }
 
 export const generateTimeLabels = (timeline: Timeline): number[] => {
@@ -53,7 +59,15 @@ export const generateTimeLabels = (timeline: Timeline): number[] => {
         return generateMonthlyTimeLabels(timeline);
     }
     else {
-        return generateDailyTimeLabels(timeline);
+        if(timeline.customTimeline && timeline.customTimeline?.end.getTime() - timeline.customTimeline?.begin.getTime() <= 72 * 60 * 60 * 1000) {
+            return generateHourlyTimeLabels(timeline);
+        }
+        else if(timeline.customTimeline && timeline.customTimeline?.end.getTime() - timeline.customTimeline?.begin.getTime() <= 60 * 24 * 60 * 60 * 1000) {
+            return generateDailyTimeLabels(timeline);
+        }
+        else {
+            return generateMonthlyTimeLabels(timeline);
+        }
     }
 }
 
@@ -68,13 +82,50 @@ export const generateFormattedTimeLabels = (timeline: Timeline): (label: number)
         return (label: number) => new Date(label).getDate().toString();
     }
     else if (timeline.type === 'Last year') {
-        return (label: number) => new Date(label).getMonth().toString();
+        return (label: number) => (new Date(label).getMonth() + 1).toString();
     }
     else if (timeline.type === 'All time') {
-        return (label: number) => new Date(label).getMonth().toString();
+        return (label: number) => (new Date(label).getMonth() + 1).toString();
     }
     else {
-        return (label: number) => new Date(label).getDate().toString();
+        if(timeline.customTimeline && timeline.customTimeline?.end.getTime() - timeline.customTimeline?.begin.getTime() <= 72 * 60 * 60 * 1000) {
+            return (label: number) => new Date(label).getHours().toString();
+        }
+        else if(timeline.customTimeline && timeline.customTimeline?.end.getTime() - timeline.customTimeline?.begin.getTime() <= 60 * 24 * 60 * 60 * 1000) {
+            return (label: number) => new Date(label).getDate().toString();
+        }
+        else {
+            return (label: number) => (new Date(label).getMonth() + 1).toString();
+        }
+    }
+}
+
+export const getTimelineLabel = (timeline: Timeline): string => {
+    if (timeline.type === 'Last 24h') {
+        return 'Hours'
+    }
+    else if (timeline.type === 'Last 7 days') {
+        return 'Days of Month'
+    }
+    else if (timeline.type === 'Last 30 days') {
+        return 'Days of Month'
+    }
+    else if (timeline.type === 'Last year') {
+        return 'Months'
+    }
+    else if (timeline.type === 'All time') {
+        return 'Months'
+    }
+    else {
+        if(timeline.customTimeline && timeline.customTimeline?.end.getTime() - timeline.customTimeline?.begin.getTime() <= 72 * 60 * 60 * 1000) {
+            return 'Hours'
+        }
+        else if(timeline.customTimeline && timeline.customTimeline?.end.getTime() - timeline.customTimeline?.begin.getTime() <= 60 * 24 * 60 * 60 * 1000) {
+            return 'Days of Month'
+        }
+        else {
+            return 'Months'
+        }
     }
 }
 
