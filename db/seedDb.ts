@@ -100,6 +100,24 @@ export default async function seedDb() {
             'Pressure',
             foundWeatherStations[0]?.id!,
             new Date(1747477524000)
+        ),
+        new Measure(
+            undefined,
+            'Precipitation',
+            'mm',
+            2.5,
+            'Precipitation',
+            foundWeatherStations[0]?.id!,
+            new Date(1747477524000)
+        ),
+        new Measure(
+            undefined,
+            'Wind Speed',
+            'km/h',
+            17,
+            'Wind Speed',
+            foundWeatherStations[0]?.id!,
+            new Date(1747477524000)
         )
     ];
     

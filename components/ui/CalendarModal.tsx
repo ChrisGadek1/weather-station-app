@@ -16,7 +16,7 @@ export type ICalendarModalProps = {
 }
 
 export default function CalendarModal({visible, onDismiss, currentWeatherStation}: ICalendarModalProps) {    
-    const theme = useTheme();
+    const theme: any = useTheme();
     const weatherStationRepository = new WeatherStationRepository();
     const calendarTheme = {
         backgroundColor: theme.colors.background,
@@ -44,7 +44,7 @@ export default function CalendarModal({visible, onDismiss, currentWeatherStation
 
     const handleCloseCalendar = () => {
         if(periodBegin && periodEnd && currentWeatherStation) {
-            const newTimeline = new Timeline("Custom", new CustomTimeline(new Date(periodBegin), new Date(periodEnd)));
+            const newTimeline = new Timeline("Custom", new CustomTimeline(new Date(periodBegin), new Date(new Date(periodEnd).getTime() + 24 * 60 * 60 * 1000)));
             weatherStationRepository.saveLocalWeatherStations([WeatherStation.fromPlainObject({...currentWeatherStation, currentTimeline: newTimeline.toPlainObject()})], () => {
                 dispatch({type: 'weatherStation/changeCurrentWeatherTimelineOfCurrentStation', payload: { currentTimeline: newTimeline.toPlainObject()} });
             });
@@ -55,10 +55,10 @@ export default function CalendarModal({visible, onDismiss, currentWeatherStation
     const preparedMarkedDates = (currentPeriodBegin: string | undefined, currentPeriodEnd: string | undefined) => {
         const dates: any = {};
         if (currentPeriodBegin) {
-            dates[currentPeriodBegin] = {startingDay: true, color: 'green'};
+            dates[currentPeriodBegin] = {startingDay: true, color: theme.calendarDateIndicatorColor};
         }
         if (currentPeriodEnd) {
-            dates[currentPeriodEnd] = {endingDay: true, color: 'green'};
+            dates[currentPeriodEnd] = {endingDay: true, color: theme.calendarDateIndicatorColor};
         }
         return {...addMissingDaysBetween(currentPeriodBegin, currentPeriodEnd), ...dates};
     }
@@ -76,7 +76,7 @@ export default function CalendarModal({visible, onDismiss, currentWeatherStation
             }
             
             dates.forEach((date) => {
-                result[date] = {color: 'green'};
+                result[date] = {color: theme.calendarDateIndicatorColor};
             })
         }
         

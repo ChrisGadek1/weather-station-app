@@ -10,6 +10,9 @@ import { StyleSheet, View } from 'react-native';
 import { Divider, useTheme } from 'react-native-paper';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
+import { measure } from 'react-native-reanimated';
+import MeasureRepository from '@/data/repositories/cache/measureRepository';
+import seedDb from '@/db/seedDb';
 
 export default function HomeScreen() {
   const dispatch = useAppDispatch();
