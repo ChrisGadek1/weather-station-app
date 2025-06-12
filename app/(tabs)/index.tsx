@@ -1,7 +1,7 @@
 import HistoricalMeasurements from '@/components/ui/HistoricalMeasurements';
 import LastMeasurement from '@/components/ui/LastMeasurement';
 import TopMenu from '@/components/ui/TopMenu';
-import { useAppDispatch } from '@/constants/hooks';
+import { useAppDispatch, useAppSelector } from '@/constants/hooks';
 import WeatherStation from '@/data/models/WeatherStation';
 import WeatherStationRepository from '@/data/repositories/cache/weatherStationRepository';
 import { addWeatherStations } from '@/data/slices/WeatherStationSlice';
@@ -13,23 +13,65 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { measure } from 'react-native-reanimated';
 import MeasureRepository from '@/data/repositories/cache/measureRepository';
 import seedDb from '@/db/seedDb';
+import { createTables } from '@/db/createTables';
+import { db } from '@/db/connect';
 
 export default function HomeScreen() {
   const dispatch = useAppDispatch();
   const theme: any = useTheme();
   const weatherStationRepository = new WeatherStationRepository();
+  const measureRepository = new MeasureRepository();
 
-  const fetchWeatherStations = async () => {
+  const weatherStations = useAppSelector(state => state.weatherStationReducer).map(station => WeatherStation.fromPlainObject(station));
+  const currentWeatherStation = weatherStations.find(station => station.currentStation) || weatherStations.length > 0 ? weatherStations[0] : undefined;
+
+  const fetchLocalWeatherStations = async () => {
     const fetchedWeatherStations = await weatherStationRepository.getLocalWeatherStations()
     dispatch(addWeatherStations(fetchedWeatherStations.map((station: WeatherStation) => station.toPlainObject())))
   };
 
+  const fetchMeasures = async () => {
+    if (currentWeatherStation && currentWeatherStation.id) {
+      const localMeasures = await measureRepository.getLocalMeasuresByWeatherStation(currentWeatherStation.id.toString());
+      if (localMeasures.length === 0) {
+        const remoteMeasures = await measureRepository.getRemoteMeasuresFromCurrentWeatherStation();
+        if (remoteMeasures.length > 0) {
+          await measureRepository.saveLocalMeasures(remoteMeasures);
+        }
+      }
+      else {
+        const sortedLocalMeasures = localMeasures.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
+        const latestLocalMeasure = sortedLocalMeasures[0];
+        const latestLocalMeasureTimestamp = latestLocalMeasure.timestamp.getTime();
+        const remoteMeasures = await measureRepository.getRemoteMeasuresForCurrentWeatherStationInTimeline(latestLocalMeasureTimestamp, Date.now());
+        if (remoteMeasures.length > 0) {
+          await measureRepository.saveLocalMeasures(remoteMeasures);
+        }
+      }
+    }
+  }
+
+  const fetchRemoteWeatherStations = async () => {
+    const remoteWeatherStations = await weatherStationRepository.getRemoteWeatherStations();
+    if (remoteWeatherStations.length > 0) {
+      await weatherStationRepository.saveLocalWeatherStations(remoteWeatherStations, async () => {
+        await fetchLocalWeatherStations();
+      });
+    }
+  }
+
   React.useEffect(() => {
     const prepareData = async () => {
-      fetchWeatherStations();
+      if(currentWeatherStation === undefined) {
+        await createTables(await db);
+        await fetchRemoteWeatherStations();
+      }
+      else {
+        await fetchMeasures();
+      }
     }
     prepareData();
-  }, []);
+  }, [currentWeatherStation]);
 
   return (
     <SafeAreaProvider>

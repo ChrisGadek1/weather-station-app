@@ -1,9 +1,11 @@
 import LocalWeatherStationDataSource from "@/data/data_sources/cache/LocalWeatherStationDataSource"
+import RemoteWeatherStationDataSource from "@/data/data_sources/remote/RemoteWeatherStationDataSource"
 import WeatherStationDataSource from "@/data/data_sources/WeatherStationDataSource"
 import WeatherStation from "@/data/models/WeatherStation"
 
 export default class WeatherStationRepository {
     private _weatherStationsDataSource: WeatherStationDataSource = new LocalWeatherStationDataSource()
+    private _remoteWeatherStationsDataSource: RemoteWeatherStationDataSource = new RemoteWeatherStationDataSource()
 
     async getLocalWeatherStations() {
         return this._weatherStationsDataSource.getAllWeatherStations()
@@ -26,5 +28,9 @@ export default class WeatherStationRepository {
 
     async deleteAllLocalWeatherStations() {
         await this._weatherStationsDataSource.deleteAllWeatherStations()
+    }
+
+    async getRemoteWeatherStations() {
+        return this._remoteWeatherStationsDataSource.getAllWeatherStations()
     }
 }

@@ -19,4 +19,12 @@ export default class MeasureQuery {
     public static deleteAllMeasures(): string {
         return "DELETE FROM measures";
     }
+
+    public static getAllMeasuresByIds(measureIds: string[]): string {
+        if (measureIds.length === 0) {
+            return "SELECT * FROM measures WHERE 1=0"; // Return no results if no IDs are provided
+        }
+        const ids = measureIds.map(id => `'${id}'`).join(", ");
+        return `SELECT * FROM measures WHERE id IN (${ids})`;
+    }
 }
